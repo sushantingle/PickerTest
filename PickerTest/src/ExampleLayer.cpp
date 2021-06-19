@@ -65,8 +65,11 @@ void ExampleLayer::OnEvent(Event& event)
 	dispatcher.Dispatch<MouseButtonPressedEvent>(
 		[&](MouseButtonPressedEvent& e)
 		{
-			m_SquareColor = m_SquareAlternateColor;
+			
 			std::cout << "Position : " << e.GetXPos() << "	" << e.GetYPos() << std::endl;
+			if (IsHittingPlane(e.GetXPos(), e.GetYPos()))
+				m_SquareColor = m_SquareAlternateColor;
+
 			return false;
 		});
 	dispatcher.Dispatch<MouseButtonReleasedEvent>(
@@ -75,6 +78,22 @@ void ExampleLayer::OnEvent(Event& event)
 			m_SquareColor = m_SquareBaseColor;
 			return false;
 		});
+}
+
+bool ExampleLayer::IsHittingPlane(double xpos, double ypos)
+{
+	// 1280x720
+	// convert screen pos to ndc range
+	float x = 2.0f * (xpos / 1280.0f) - 1.0f;
+	float y = 2.0f * (ypos / 720.0f) - 1.0f;
+
+	glm::vec4 screenPos = glm::vec4(x, y, 0, 1.0f);
+	auto projectionMatrix = m_CameraController.GetCamera().GetProjectionMatrix();
+	auto viewMatrix = m_CameraController.GetCamera().GetViewMatrix();
+	auto invViewProj = glm::inverse(viewMatrix * projectionMatrix);
+	glm::vec3 worldPos = screenPos * invViewProj;
+
+	return (worldPos.x > -0.5f && worldPos.x < 0.5f && worldPos.y > -0.5f && worldPos.y < 0.5f);
 }
 
 void ExampleLayer::OnUpdate(Timestep ts)
