@@ -64,8 +64,8 @@ namespace GLCore {
 	class MouseButtonPressedEvent : public MouseButtonEvent
 	{
 	public:
-		MouseButtonPressedEvent(int button)
-			: MouseButtonEvent(button) {}
+		MouseButtonPressedEvent(int button, double xpos, double ypos)
+			: MouseButtonEvent(button), m_XPos(xpos), m_YPos(ypos) {}
 
 		std::string ToString() const override
 		{
@@ -74,14 +74,21 @@ namespace GLCore {
 			return ss.str();
 		}
 
+		double GetXPos() const { return m_XPos; }
+		double GetYPos() const { return m_YPos; }
+
 		EVENT_CLASS_TYPE(MouseButtonPressed)
+
+	protected:
+		double m_XPos;
+		double m_YPos;
 	};
 
 	class MouseButtonReleasedEvent : public MouseButtonEvent
 	{
 	public:
-		MouseButtonReleasedEvent(int button)
-			: MouseButtonEvent(button) {}
+		MouseButtonReleasedEvent(int button, double xpos, double ypos)
+			: MouseButtonEvent(button), m_XPos(xpos), m_YPos(ypos) {}
 
 		std::string ToString() const override
 		{
@@ -89,8 +96,13 @@ namespace GLCore {
 			ss << "MouseButtonReleasedEvent: " << m_Button;
 			return ss.str();
 		}
+		double GetXPos() const { return m_XPos; }
+		double GetYPos() const { return m_YPos; }
 
 		EVENT_CLASS_TYPE(MouseButtonReleased)
+	protected:
+		double m_XPos;
+		double m_YPos;
 	};
 
 }

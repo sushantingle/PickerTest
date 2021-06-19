@@ -66,6 +66,7 @@ void ExampleLayer::OnEvent(Event& event)
 		[&](MouseButtonPressedEvent& e)
 		{
 			m_SquareColor = m_SquareAlternateColor;
+			std::cout << "Position : " << e.GetXPos() << "	" << e.GetYPos() << std::endl;
 			return false;
 		});
 	dispatcher.Dispatch<MouseButtonReleasedEvent>(

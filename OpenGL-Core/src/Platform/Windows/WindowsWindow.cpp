@@ -116,18 +116,19 @@ namespace GLCore {
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-
+			double xpos, ypos;
+			glfwGetCursorPos(window, &xpos, &ypos);
 			switch (action)
 			{
 				case GLFW_PRESS:
 				{
-					MouseButtonPressedEvent event(button);
+					MouseButtonPressedEvent event(button, xpos, ypos);
 					data.EventCallback(event);
 					break;
 				}
 				case GLFW_RELEASE:
 				{
-					MouseButtonReleasedEvent event(button);
+					MouseButtonReleasedEvent event(button, xpos, ypos);
 					data.EventCallback(event);
 					break;
 				}
