@@ -13,7 +13,7 @@ namespace TransformUtil {
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
 		glm::mat4 invertProj = glm::inverse(cameraController.GetCamera().GetViewProjectionMatrix() * model);
 		glm::vec4 worldPos = invertProj * screenPos;
-		//worldPos /= worldPos.w;
+		worldPos /= worldPos.w;
 		return glm::vec3(worldPos);
 	}
 }
