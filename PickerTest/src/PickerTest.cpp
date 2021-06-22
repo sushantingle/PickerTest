@@ -1,21 +1,21 @@
-#include "ExampleLayer.h"
+#include "PickerTest.h"
 #include "../TransformUtil.h"
 
 using namespace GLCore;
 using namespace GLCore::Utils;
 
-ExampleLayer::ExampleLayer()
+PickerTest::PickerTest()
 	: m_CameraController(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 1000.0f, glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f))
 {
 	
 }
 
-ExampleLayer::~ExampleLayer()
+PickerTest::~PickerTest()
 {
 
 }
 
-void ExampleLayer::OnAttach()
+void PickerTest::OnAttach()
 {
 	EnableGLDebugging();
 
@@ -37,14 +37,14 @@ void ExampleLayer::OnAttach()
 	}
 }
 
-void ExampleLayer::OnDetach()
+void PickerTest::OnDetach()
 {
 	for(Plane* plane : m_Plane)
 		delete plane;
 	m_Plane.clear();
 }
 
-void ExampleLayer::OnEvent(Event& event)
+void PickerTest::OnEvent(Event& event)
 {
 	m_CameraController.OnEvent(event);
 
@@ -76,7 +76,7 @@ void ExampleLayer::OnEvent(Event& event)
 
 		if (m_MouseDown && m_PickedPlaneIndex != -1)
 		{
-			glm::vec3 rayStart = TransformUtil::ConvertScreenToWorld(e.GetX(), e.GetY(), 1280.0f, 720.0f, m_CameraController, glm::vec3(0.0f));
+			glm::vec3 rayStart = TransformUtil::ConvertScreenToWorld(e.GetX(), e.GetY(), 1280.0f, 720.0f, m_CameraController);
 			glm::vec3 rayDirection = glm::normalize(glm::vec3(glm::vec3(rayStart) - m_CameraController.GetCamera().GetPosition()));
 			m_Plane[m_PickedPlaneIndex]->FollowRay(rayStart, rayDirection);
 		}
@@ -85,9 +85,9 @@ void ExampleLayer::OnEvent(Event& event)
 	});
 }
 
-bool ExampleLayer::IsHittingPlane(double xpos, double ypos)
+bool PickerTest::IsHittingPlane(double xpos, double ypos)
 {
-	glm::vec3 rayStart = TransformUtil::ConvertScreenToWorld(xpos, ypos, 1280.0f, 720.0f, m_CameraController, glm::vec3(0.0f));
+	glm::vec3 rayStart = TransformUtil::ConvertScreenToWorld(xpos, ypos, 1280.0f, 720.0f, m_CameraController);
 	glm::vec3 rayDirection = glm::normalize(glm::vec3(glm::vec3(rayStart) - m_CameraController.GetCamera().GetPosition()));
 	glm::vec3 intersectionPoint = glm::vec3(0.0f);
 	for (int i = 0; i < m_Plane.size(); ++i)
@@ -101,7 +101,7 @@ bool ExampleLayer::IsHittingPlane(double xpos, double ypos)
 	return false;
 }
 
-void ExampleLayer::OnUpdate(Timestep ts)
+void PickerTest::OnUpdate(Timestep ts)
 {
 	m_CameraController.OnUpdate(ts);
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -111,7 +111,7 @@ void ExampleLayer::OnUpdate(Timestep ts)
 		plane->Update();
 }
 
-void ExampleLayer::OnImGuiRender()
+void PickerTest::OnImGuiRender()
 {
 	ImGui::Begin("Controls");
 	ImGui::Text("Mouse : %s", m_MouseDown ? "Down" : "Up");

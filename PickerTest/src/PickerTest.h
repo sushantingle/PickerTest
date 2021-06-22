@@ -4,11 +4,11 @@
 #include <GLCoreUtils.h>
 #include "../Plane.h"
 
-class ExampleLayer : public GLCore::Layer
+class PickerTest : public GLCore::Layer
 {
 public:
-	ExampleLayer();
-	virtual ~ExampleLayer();
+	PickerTest();
+	virtual ~PickerTest();
 
 	virtual void OnAttach() override;
 	virtual void OnDetach() override;
