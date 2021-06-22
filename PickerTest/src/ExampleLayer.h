@@ -19,14 +19,9 @@ private:
 	GLCore::Utils::Shader* m_Shader;
 	GLCore::Utils::PerspectiveCameraController m_CameraController;
 
-	glm::vec3 m_RayStart = glm::vec3(0.0f);
-	glm::vec3 m_RayDirection = glm::vec3(0.0f);
-	glm::vec3 m_IntersectionPoint = glm::vec3(0.0f);
-
 	bool IsHittingPlane(double xpos, double ypos);
-	glm::vec3 GetWorldPos(double xpos, double ypos);
-	bool m_MouseDown;
-	bool m_IsSelected;
 
-	Plane* m_Plane;
+	bool m_MouseDown = false;
+	int m_PickedPlaneIndex = -1;
+	std::vector<Plane*> m_Plane;
 };

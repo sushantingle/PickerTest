@@ -16,6 +16,9 @@ public:
 	bool RayhitTest(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::vec3& intersectionPoint);
 	bool IsInBoundingBox(float worldPosX, float worldPosY);
 	void OnPicked(bool selected);
+
+	void UpdatePosition(glm::vec3 position) { m_WorldPos = position; }
+	void FollowRay(glm::vec3 rayOrigin, glm::vec3 rayDirection);
 private:
 	GLuint m_QuadVA, m_QuadVB, m_QuadIB;
 	const GLCore::Utils::PerspectiveCameraController& m_CameraController;

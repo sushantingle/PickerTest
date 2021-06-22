@@ -70,8 +70,7 @@ Plane::~Plane()
 
 void Plane::Update()
 {
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
 
 	glUseProgram(m_Shader->GetRendererID());
 
@@ -115,10 +114,18 @@ bool Plane::RayhitTest(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::vec3& i
 	return IsInBoundingBox(intersectionPoint.x, intersectionPoint.y);
 }
 
+void Plane::FollowRay(glm::vec3 rayOrigin, glm::vec3 rayDirection)
+{
+	float d = glm::dot(m_Normal, m_WorldPos + m_Vertices[0]);
+	float t = (d - glm::dot(m_Normal, rayOrigin)) / glm::dot(m_Normal, rayDirection);
+	glm::vec3 intersectionPoint = rayOrigin + t * rayDirection;
+	m_WorldPos = intersectionPoint;
+}
+
 bool Plane::IsInBoundingBox(float worldPosX, float worldPosY)
 {
-	if (worldPosX < m_BoundingBox.minX || worldPosX > m_BoundingBox.maxX) return false;
-	if (worldPosY < m_BoundingBox.minY || worldPosY > m_BoundingBox.maxY) return false;
+	if (worldPosX < m_WorldPos.x + m_BoundingBox.minX || worldPosX > m_WorldPos.x + m_BoundingBox.maxX) return false;
+	if (worldPosY < m_WorldPos.y + m_BoundingBox.minY || worldPosY > m_WorldPos.y + m_BoundingBox.maxY) return false;
 
 	return true;
 }
