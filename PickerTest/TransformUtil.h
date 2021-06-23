@@ -2,9 +2,10 @@
 #include <GLCore.h>
 #include <GLCoreUtils.h>
 
-namespace TransformUtil {
+class TransformUtil{
 
-	glm::vec3 ConvertScreenToWorld(float screenX, float screenY, float viewWidth, float viewHeight, const GLCore::Utils::PerspectiveCameraController& cameraController)
+public:
+	static glm::vec3 ConvertScreenToWorld(float screenX, float screenY, float viewWidth, float viewHeight, const GLCore::Utils::PerspectiveCameraController & cameraController)
 	{
 		float ndcX = (2.0f * screenX / viewWidth) - 1.0f;
 		float ndcY = 1.0f - (2.0f * screenY / viewHeight);
@@ -15,4 +16,13 @@ namespace TransformUtil {
 		worldPos /= worldPos.w;
 		return glm::vec3(worldPos);
 	}
-}
+
+	static glm::vec3 ConvertToNDC(float screenX, float screenY, float z, float viewWidth, float viewHeight)
+	{
+		glm::vec3 ndc;
+		ndc.x = 2.0f * screenX / viewWidth - 1.0f;
+		ndc.y = 1.0f - 2.0f * screenY / viewHeight;
+		ndc.z = 2.0f * z - 1.0f;
+		return ndc;
+	}
+};

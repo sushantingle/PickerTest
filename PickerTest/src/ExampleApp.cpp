@@ -1,5 +1,6 @@
 #include "GLCore.h"
 #include "PickerTest.h"
+#include "PointCloud.h"
 
 using namespace GLCore;
 
@@ -9,7 +10,8 @@ public:
 	Example()
 		: Application("OpenGL Examples")
 	{
-		PushLayer(new PickerTest());
+		// PushLayer(new PickerTest());
+		PushLayer(new PointCloud(GetWindow()));
 	}
 };
 
