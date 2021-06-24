@@ -9,5 +9,10 @@ PickerTest is sample to demonstrate few things. In one of the interview, I was a
 
 Since answer was given theoretically and may be, it wasn't well delivered. So, i thought of implementing it to get some handson.
 
+## How To
+Two Layers are implemented.
+- Picker Test : Demonstrates plane picking with raycast originated from mouse position.
+- Point Cloud Test: Demonstrates updating selected points in point cloud geom type. Supported Geom types are Triangle and Rectangle.
+
 ## Note
-Development is in progress. More detailed ReadMe in future.
+Done for now. If anything comes up in mind, i will add new things.
