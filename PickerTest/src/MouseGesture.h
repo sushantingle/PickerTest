@@ -12,6 +12,10 @@ public:
 
 	void OnImGuiRender();
 	void Render();
+
+	const BoundingBox& GetGestureBox() const { return m_GestureBox; }
+	const glm::vec3& GetDragStartPosition() const { return m_DragStartWorldPos; }
+	const glm::vec3& GetDragEndPosition() const { return m_DragEndWorldPos; }
 private:
 	
 	BoundingBox m_GestureBox;

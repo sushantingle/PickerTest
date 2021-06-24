@@ -29,6 +29,7 @@ void MouseGesture::OnMouseDragStart(double xPos, double yPos)
 	m_DragStartWorldPos = TransformUtil::ConvertToNDC(xPos, yPos, 0.0f, m_Window.GetWidth(), m_Window.GetHeight());
 	m_MouseDragFinished = false;
 	m_CanRender = false;
+	std::cout << xPos << "," << yPos << std::endl;
 }
 
 void MouseGesture::OnMouseDragMove(double xPos, double yPos)

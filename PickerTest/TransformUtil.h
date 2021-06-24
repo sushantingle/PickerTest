@@ -25,4 +25,13 @@ public:
 		ndc.z = 2.0f * z - 1.0f;
 		return ndc;
 	}
+
+	static glm::vec3 ConvertNDCToScreen(glm::vec3 position, float viewWidth, float viewHeight)
+	{
+		glm::vec3 screenPos;
+		screenPos.x = (position.x + 1.0f) * viewWidth / 2.0f;
+		screenPos.y = (1.0f - position.y) * viewHeight / 2.0f;
+		screenPos.z = (position.z + 1.0f) / 2.0f;
+		return screenPos;
+	}
 };

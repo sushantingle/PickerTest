@@ -57,10 +57,6 @@ void PointCloud::OnEvent(Event& event)
 		[&](MouseButtonPressedEvent& e)
 	{
 		m_MouseDown = true;
-		if (IsHittingPlane(e.GetXPos(), e.GetYPos()))
-		{
-			m_Points[m_PickedPlaneIndex]->OnPicked(true);
-		}
 		m_MouseGesture->OnMouseDragStart(e.GetXPos(), e.GetYPos());
 		return false;
 	});
@@ -68,10 +64,9 @@ void PointCloud::OnEvent(Event& event)
 		[&](MouseButtonReleasedEvent& e)
 	{
 		m_MouseDown = false;
-		if (m_PickedPlaneIndex != -1)
-			m_Points[m_PickedPlaneIndex]->OnPicked(false);
-		m_PickedPlaneIndex = -1;
 		m_MouseGesture->OnMouseDragEnd(e.GetXPos(), e.GetYPos());
+
+		SelectPointsInGestureArea();
 		return false;
 	});
 
@@ -82,12 +77,7 @@ void PointCloud::OnEvent(Event& event)
 		if (m_MouseDown)
 		{
 			m_MouseGesture->OnMouseDragMove(e.GetX(), e.GetY());
-			if (m_PickedPlaneIndex != -1)
-			{
-				glm::vec3 rayStart = TransformUtil::ConvertScreenToWorld(e.GetX(), e.GetY(), 1280.0f, 720.0f, m_CameraController);
-				glm::vec3 rayDirection = glm::normalize(glm::vec3(glm::vec3(rayStart) - m_CameraController.GetCamera().GetPosition()));
-				m_Points[m_PickedPlaneIndex]->FollowRay(rayStart, rayDirection);
-			}
+			SelectPointsInGestureArea();
 		}
 
 		return false;
@@ -108,6 +98,45 @@ bool PointCloud::IsHittingPlane(double xpos, double ypos)
 		}
 	}
 	return false;
+}
+
+void PointCloud::SelectPointsInGestureArea()
+{
+	const BoundingBox& rect = m_MouseGesture->GetGestureBox();
+	glm::vec3 leftScreenPos = TransformUtil::ConvertNDCToScreen(m_MouseGesture->GetDragStartPosition(), m_Window.GetWidth(), m_Window.GetHeight());
+	glm::vec3 rightScreenPos = TransformUtil::ConvertNDCToScreen(m_MouseGesture->GetDragEndPosition(), m_Window.GetWidth(), m_Window.GetHeight());
+
+	glm::vec3 leftWorldPos = TransformUtil::ConvertScreenToWorld(leftScreenPos.x, leftScreenPos.y, m_Window.GetWidth(), m_Window.GetHeight(), m_CameraController);
+	glm::vec3 rightWorldPos = TransformUtil::ConvertScreenToWorld(rightScreenPos.x, rightScreenPos.y, m_Window.GetWidth(), m_Window.GetHeight(), m_CameraController);
+
+	if (glm::length(rightWorldPos - leftWorldPos) == 0.0f) return;
+
+	glm::vec3 planeSideA = glm::vec3(rightWorldPos.x, leftWorldPos.y, leftWorldPos.z) - leftWorldPos;
+	glm::vec3 planeSideB = glm::vec3(leftWorldPos.x, rightWorldPos.y, leftWorldPos.z) - leftWorldPos;
+	glm::vec3 normal = glm::normalize(glm::cross(planeSideA, planeSideB));
+
+	float minX = glm::min(leftWorldPos.x, rightWorldPos.x);
+	float maxX = glm::max(leftWorldPos.x, rightWorldPos.x);
+
+	float minY = glm::min(leftWorldPos.y, rightWorldPos.y);
+	float maxY = glm::max(leftWorldPos.y, rightWorldPos.y);
+
+	for (Point* point : m_Points)
+	{
+		glm::vec3 intersectionPoint = glm::vec3(0.0f);
+		bool selected = false;
+		if (point->RayhitTest(normal, leftWorldPos, intersectionPoint))
+		{
+			if ((intersectionPoint.x < minX || intersectionPoint.x > maxX) ||
+				(intersectionPoint.y < minY || intersectionPoint.y > maxY))
+			{
+				selected = false;
+			}
+			else
+				selected = true;
+		}
+		point->OnPicked(selected);
+	}
 }
 
 void PointCloud::OnUpdate(Timestep ts)

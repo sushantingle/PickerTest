@@ -21,7 +21,7 @@ private:
 	GLCore::Utils::PerspectiveCameraController m_CameraController;
 	MouseGesture* m_MouseGesture;
 	bool IsHittingPlane(double xpos, double ypos);
-	
+	void SelectPointsInGestureArea();
 
 	bool m_MouseDown = false;
 	int m_PickedPlaneIndex = -1;

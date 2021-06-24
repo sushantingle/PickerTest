@@ -68,9 +68,21 @@ void Point::OnPicked(bool selected)
 	m_SquareColor = selected ? m_SquareAlternateColor : m_SquareBaseColor;
 }
 
-bool Point::RayhitTest(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::vec3& intersectionPoint)
+bool Point::RayhitTest(glm::vec3 normal, glm::vec3 planePoint, glm::vec3& intersectionPoint)
 {
-	return false;
+	glm::vec3 rayOrigin = glm::vec3(glm::translate(glm::mat4(1.0f), m_WorldPos) * glm::vec4(m_Vertices[0], 1.0f));
+	glm::vec3 rayDirection = glm::normalize(m_CameraController.GetCamera().GetPosition() - rayOrigin);
+
+	float d = glm::dot(normal, planePoint);
+
+	if (glm::dot(normal, rayDirection) == 0.0f)
+	{ 
+		return false;
+	}
+	float t = (d - glm::dot(normal, rayOrigin)) / glm::dot(normal, rayDirection);
+	intersectionPoint = rayOrigin + t * rayDirection;
+
+	return true;
 }
 
 void Point::FollowRay(glm::vec3 rayOrigin, glm::vec3 rayDirection)
