@@ -6,7 +6,7 @@ using namespace GLCore::Utils;
 
 PointCloud::PointCloud(const GLCore::Window& window)
 	: m_Window(window),
-	  m_CameraController(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 1000.0f, glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f))
+	  m_CameraController(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 1000.0f, glm::vec3(15.0f, 40.0f, 75.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f))
 {
 	m_MouseGesture = new MouseGesture(window, m_CameraController);
 }
@@ -20,16 +20,11 @@ void PointCloud::OnAttach()
 {
 	EnableGLDebugging();
 
-	m_Shader = Shader::FromGLSLTextFiles(
-		"assets/shaders/test.vert.glsl",
-		"assets/shaders/test.frag.glsl"
-	);
-
 	m_Points.reserve(10);
 	glm::vec3 startPos = glm::vec3(0.0f);
-	for (int i = 0; i < 100; ++i)
+	for (int i = 0; i < 300; ++i)
 	{
-		m_Points.push_back(new Point(m_Shader, m_CameraController));
+		m_Points.push_back(new Point(m_CameraController));
 
 		startPos.x = (i % 20) * 2;
 		if (i % 20 == 0) startPos.x = 0;
@@ -136,6 +131,7 @@ void PointCloud::SelectPointsInGestureArea()
 				selected = true;
 		}
 		point->OnPicked(selected);
+		point->SetPointCloudType(selected ? m_CurrentPointCloudPointType : PointCloudPointType::POINT);
 	}
 }
 
@@ -154,8 +150,26 @@ void PointCloud::OnUpdate(Timestep ts)
 void PointCloud::OnImGuiRender()
 {
 	ImGui::Begin("Controls");
-	ImGui::Text("Mouse : %s", m_MouseDown ? "Down" : "Up");
-	ImGui::Text("Picked Plane Index : %d", m_PickedPlaneIndex);
+	bool selected = false;
+
+	if (ImGui::BeginMenu("Geom Type", true))
+	{
+		if (ImGui::MenuItem("Triangle", "", &selected))
+		{
+			m_CurrentPointCloudPointType = PointCloudPointType::TRIANGLE;
+		}
+
+		if (ImGui::MenuItem("Rectangle", "", &selected))
+		{
+			m_CurrentPointCloudPointType = PointCloudPointType::RECTANGLE;
+		}
+
+		if (ImGui::MenuItem("Point", "", &selected))
+		{
+			m_CurrentPointCloudPointType = PointCloudPointType::POINT;
+		}
+		ImGui::EndMenu();
+	}
 	ImGui::End();
 	m_MouseGesture->OnImGuiRender();
 }

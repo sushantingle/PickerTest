@@ -1,10 +1,11 @@
 #include "Plane.h"
+#include "src\ShaderLibrary.h"
 
 using namespace GLCore;
 using namespace GLCore::Utils;
 
-Plane::Plane(GLCore::Utils::Shader* shader, const GLCore::Utils::PerspectiveCameraController& cameraController)
-	: m_Shader(shader), m_CameraController(cameraController)
+Plane::Plane(const GLCore::Utils::PerspectiveCameraController& cameraController)
+	:m_CameraController(cameraController)
 {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
@@ -70,16 +71,16 @@ Plane::~Plane()
 
 void Plane::Update()
 {
-	
 
-	glUseProgram(m_Shader->GetRendererID());
+	GLuint shaderId = ShaderLibrary::GetShader(ShaderLibrary::SHADER_TEST)->GetRendererID();
+	glUseProgram(shaderId);
 
 	glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(m_WorldPos));
 	glm::mat4 MVP = m_CameraController.GetCamera().GetViewProjectionMatrix() * model;
-	int location = glGetUniformLocation(m_Shader->GetRendererID(), "u_ViewProjection");
+	int location = glGetUniformLocation(shaderId, "u_ViewProjection");
 	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(MVP));
 
-	location = glGetUniformLocation(m_Shader->GetRendererID(), "u_Color");
+	location = glGetUniformLocation(shaderId, "u_Color");
 	glUniform4fv(location, 1, glm::value_ptr(m_SquareColor));
 
 	glBindVertexArray(m_QuadVA);

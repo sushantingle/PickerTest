@@ -16,7 +16,6 @@ public:
 	virtual void OnUpdate(GLCore::Timestep ts) override;
 	virtual void OnImGuiRender() override;
 private:
-	GLCore::Utils::Shader* m_Shader;
 	GLCore::Utils::PerspectiveCameraController m_CameraController;
 
 	bool IsHittingPlane(double xpos, double ypos);

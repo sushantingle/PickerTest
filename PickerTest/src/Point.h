@@ -7,7 +7,7 @@
 
 class Point {
 public:
-	Point(GLCore::Utils::Shader* shader, const GLCore::Utils::PerspectiveCameraController& cameraController);
+	Point(const GLCore::Utils::PerspectiveCameraController& cameraController);
 	~Point();
 	void Update();
 
@@ -17,22 +17,24 @@ public:
 	bool RayhitTest(glm::vec3 normal, glm::vec3 planePoint, glm::vec3& intersectionPoint);
 	bool IsInBoundingBox(float worldPosX, float worldPosY);
 	void OnPicked(bool selected);
+	void SetPointCloudType(PointCloudPointType type) { m_CurrentPointCloudPointType = type; }
 
 	void UpdatePosition(glm::vec3 position) { m_WorldPos = position; }
 	void FollowRay(glm::vec3 rayOrigin, glm::vec3 rayDirection);
 private:
 	GLuint m_QuadVA, m_QuadVB, m_QuadIB;
 	const GLCore::Utils::PerspectiveCameraController& m_CameraController;
-	GLCore::Utils::Shader* m_Shader;
 
 	glm::vec4 m_SquareBaseColor = { 1.0f, 0.0f, 0.0f, 1.0f };
 	glm::vec4 m_SquareAlternateColor = { 0.0f, 1.0f, 0.0f, 1.0f };
 	glm::vec4 m_SquareColor = m_SquareBaseColor;
 
+	bool m_IsSelected = false;
 	glm::vec3 m_Vertices[4];
 	BoundingBox m_BoundingBox;
 	glm::vec3 m_WorldPos = glm::vec3(0.0f);
 
-	PointCloudPointType m_CurrentPointCloudPointType;
+	PointCloudPointType m_CurrentPointCloudPointType = PointCloudPointType::POINT;
 	void CreateBoundingBox();
+	const GLCore::Utils::Shader* GetShader();
 };

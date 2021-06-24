@@ -6,7 +6,7 @@
 
 class Plane {
 public:
-	Plane(GLCore::Utils::Shader* shader, const GLCore::Utils::PerspectiveCameraController& cameraController);
+	Plane(const GLCore::Utils::PerspectiveCameraController& cameraController);
 	~Plane();
 	void Update();
 
@@ -22,7 +22,6 @@ public:
 private:
 	GLuint m_QuadVA, m_QuadVB, m_QuadIB;
 	const GLCore::Utils::PerspectiveCameraController& m_CameraController;
-	GLCore::Utils::Shader* m_Shader;
 
 	glm::vec4 m_SquareBaseColor = { 0.8f, 0.2f, 0.3f, 1.0f };
 	glm::vec4 m_SquareAlternateColor = { 0.2f, 0.3f, 0.8f, 1.0f };

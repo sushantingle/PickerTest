@@ -58,17 +58,19 @@ namespace GLCore::Utils {
 		return shader;
 	}
 
-	Shader* Shader::FromGLSLTextFiles(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
+	Shader* Shader::FromGLSLTextFiles(const std::string& vertexShaderPath, const std::string& fragmentShaderPath, const std::string& geometryShaderPath /*= ""*/)
 	{
 		Shader* shader = new Shader();
-		shader->LoadFromGLSLTextFiles(vertexShaderPath, fragmentShaderPath);
+		shader->LoadFromGLSLTextFiles(vertexShaderPath, fragmentShaderPath, geometryShaderPath);
 		return shader;
 	}
 	
-	void Shader::LoadFromGLSLTextFiles(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
+	void Shader::LoadFromGLSLTextFiles(const std::string& vertexShaderPath, const std::string& fragmentShaderPath, const std::string& geometryShaderPath)
 	{
 		std::string vertexSource = ReadFileAsString(vertexShaderPath);
 		std::string fragmentSource = ReadFileAsString(fragmentShaderPath);
+		bool hasGeometryShader = geometryShaderPath.length() > 0;
+		std::string geometrySource = hasGeometryShader ? ReadFileAsString(geometryShaderPath) : "";
 
 		GLuint program = glCreateProgram();
 		int glShaderIDIndex = 0;
@@ -77,6 +79,13 @@ namespace GLCore::Utils {
 		glAttachShader(program, vertexShader);
 		GLuint fragmentShader = CompileShader(GL_FRAGMENT_SHADER, fragmentSource);
 		glAttachShader(program, fragmentShader);
+
+		GLuint geometryShader = 0;
+		if (hasGeometryShader)
+		{
+			geometryShader = CompileShader(GL_GEOMETRY_SHADER, geometrySource);
+			glAttachShader(program, geometryShader);
+		}
 
 		glLinkProgram(program);
 
@@ -95,14 +104,26 @@ namespace GLCore::Utils {
 			glDeleteShader(vertexShader);
 			glDeleteShader(fragmentShader);
 
+			if (hasGeometryShader)
+			{
+				glDeleteShader(geometryShader);
+			}
+
 			LOG_ERROR("{0}", infoLog.data());
 			// HZ_CORE_ASSERT(false, "Shader link failure!");
 		}
 		
 		glDetachShader(program, vertexShader);
 		glDetachShader(program, fragmentShader);
+
 		glDeleteShader(vertexShader);
 		glDeleteShader(fragmentShader);
+
+		if (hasGeometryShader)
+		{
+			glDetachShader(program, geometryShader);
+			glDeleteShader(geometryShader);
+		}
 
 		m_RendererID = program;
 	}

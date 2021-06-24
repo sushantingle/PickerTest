@@ -1,10 +1,11 @@
 #include "Point.h"
+#include "ShaderLibrary.h"
 
 using namespace GLCore;
 using namespace GLCore::Utils;
 
-Point::Point(GLCore::Utils::Shader* shader, const GLCore::Utils::PerspectiveCameraController& cameraController)
-	: m_Shader(shader), m_CameraController(cameraController)
+Point::Point(const GLCore::Utils::PerspectiveCameraController& cameraController)
+	: m_CameraController(cameraController)
 {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
@@ -39,15 +40,16 @@ Point::~Point()
 
 void Point::Update()
 {
-	glUseProgram(m_Shader->GetRendererID());
+	auto shaderId = GetShader()->GetRendererID();
+	glUseProgram(shaderId);
 
 	glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(m_WorldPos));
 	glm::mat4 MVP = m_CameraController.GetCamera().GetViewProjectionMatrix() * model;
-	int location = glGetUniformLocation(m_Shader->GetRendererID(), "u_ViewProjection");
+	int location = glGetUniformLocation(shaderId, "u_ViewProjection");
 	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(MVP));
 
-	location = glGetUniformLocation(m_Shader->GetRendererID(), "u_Color");
-	glUniform4fv(location, 1, glm::value_ptr(m_SquareColor));
+	location = glGetUniformLocation(shaderId, "u_Color");
+	glUniform4fv(location, 1, glm::value_ptr(m_IsSelected ? m_SquareAlternateColor : m_SquareColor));
 
 	glBindVertexArray(m_QuadVA);
 	glDrawArrays(GL_POINTS, 0, 1);
@@ -65,7 +67,7 @@ void Point::OnMouseUp(double xPos, double yPos)
 
 void Point::OnPicked(bool selected)
 {
-	m_SquareColor = selected ? m_SquareAlternateColor : m_SquareBaseColor;
+	m_IsSelected = selected;
 }
 
 bool Point::RayhitTest(glm::vec3 normal, glm::vec3 planePoint, glm::vec3& intersectionPoint)
@@ -93,4 +95,20 @@ void Point::FollowRay(glm::vec3 rayOrigin, glm::vec3 rayDirection)
 bool Point::IsInBoundingBox(float worldPosX, float worldPosY)
 {
 	return false;
+}
+
+const GLCore::Utils::Shader* Point::GetShader()
+{
+	switch (m_CurrentPointCloudPointType)
+	{
+	
+	case PointCloudPointType::TRIANGLE:
+		return ShaderLibrary::GetShader(ShaderLibrary::SHADER_TRIANGLE_GEOM);
+	case PointCloudPointType::RECTANGLE:
+		return ShaderLibrary::GetShader(ShaderLibrary::SHADER_RECT_GEOM);
+	case PointCloudPointType::POINT:
+	default:
+		return ShaderLibrary::GetShader(ShaderLibrary::SHADER_TEST);
+	}
+	return nullptr;
 }

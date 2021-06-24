@@ -1,6 +1,7 @@
 #include "GLCore.h"
 #include "PickerTest.h"
 #include "PointCloud.h"
+#include "ShaderLibrary.h"
 
 using namespace GLCore;
 
@@ -10,7 +11,8 @@ public:
 	Example()
 		: Application("OpenGL Examples")
 	{
-		// PushLayer(new PickerTest());
+		ShaderLibrary::LoadShaders();
+		//PushLayer(new PickerTest());
 		PushLayer(new PointCloud(GetWindow()));
 	}
 };

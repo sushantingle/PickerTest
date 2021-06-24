@@ -17,7 +17,6 @@ public:
 	virtual void OnUpdate(GLCore::Timestep ts) override;
 	virtual void OnImGuiRender() override;
 private:
-	GLCore::Utils::Shader* m_Shader;
 	GLCore::Utils::PerspectiveCameraController m_CameraController;
 	MouseGesture* m_MouseGesture;
 	bool IsHittingPlane(double xpos, double ypos);
@@ -27,4 +26,6 @@ private:
 	int m_PickedPlaneIndex = -1;
 	std::vector<Point*> m_Points;
 	const GLCore::Window& m_Window;
+
+	PointCloudPointType m_CurrentPointCloudPointType = PointCloudPointType::TRIANGLE;
 };

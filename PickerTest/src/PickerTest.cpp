@@ -5,7 +5,7 @@ using namespace GLCore;
 using namespace GLCore::Utils;
 
 PickerTest::PickerTest()
-	: m_CameraController(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 1000.0f, glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f))
+	: m_CameraController(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 1000.0f, glm::vec3(10.0f, 120.0f, 150.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f))
 {
 	
 }
@@ -19,16 +19,11 @@ void PickerTest::OnAttach()
 {
 	EnableGLDebugging();
 
-	m_Shader = Shader::FromGLSLTextFiles(
-		"assets/shaders/test.vert.glsl",
-		"assets/shaders/test.frag.glsl"
-	);
-
 	m_Plane.reserve(10);
 	glm::vec3 startPos = glm::vec3(0.0f);
-	for (int i = 0; i < 100; ++i)
+	for (int i = 0; i < 1000; ++i)
 	{
-		m_Plane.push_back(new Plane(m_Shader, m_CameraController));
+		m_Plane.push_back(new Plane(m_CameraController));
 		
 		startPos.x = (i % 20) * 2;
 		if (i % 20 == 0) startPos.x = 0;
