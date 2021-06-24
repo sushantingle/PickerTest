@@ -74,12 +74,7 @@ void MouseGesture::GenerateVBOData()
 
 void MouseGesture::OnImGuiRender()
 {
-	/*ImGui::Begin("Gesture");
-	ImGui::Text("MouseStart : %f, %f %f", m_GestureBox.minX, m_GestureBox.minY, m_Vertices[0].z);
-	ImGui::Text("MouseEnd : %f, %f %f", m_GestureBox.maxX, m_GestureBox.maxY, m_Vertices[0].z);
-	glm::vec3 position = m_CameraController.GetCamera().GetPosition();
-	ImGui::Text("Camera Position : %f %f %f", position.x, position.y, position.z);
-	ImGui::End();*/
+	
 }
 
 void MouseGesture::Render()
